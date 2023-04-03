@@ -3,22 +3,9 @@ import matplotlib.pyplot as plt
 import seaborn as sns, numpy as np
 import requests
 import json
-import plotly.graph_objects as go
-from datetime import datetime
-
 
 import plotly.graph_objects as go
-
-import pandas as pd
 from datetime import datetime
-
-#df = pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/finance-charts-apple.csv')
-#print(type(df))
-#print(df)
-
-isDaily = False
-
-#if isDaily:
 
 symbol="SPY"
 
@@ -63,7 +50,31 @@ r = requests.get(url)
 data = r.json()
 k="Monthly Time Series"
 dates = data[k]
-#print("dates:", dates,"type dates", type(dates))
 time=[]
 high=[]
+open=[]
+close=[]
+low=[]
+volume=[]
+for key, value in  dates.items():
+        time.append(key)
+        open.append(value["1. open"])
+        high.append(value["2. high"])
+        low.append(value["3. low"])
+        close.append(value["4. close"])
+        volume.append(value["5. volume"])
 
+df = pd.DataFrame({"time":time, "open":open, "high":high, "low":low, "close":close})
+
+print("df:", df)
+fig = go.Figure(data=[go.Candlestick(x=df['time'],
+                open=df['open'],
+                high=df['high'],
+                low=df['low'],
+                close=df['close'])],
+                layout=go.Layout(
+                title=go.layout.Title(text=symbol+" "+ti)
+    ))
+
+
+fig.show()
